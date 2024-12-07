@@ -5,38 +5,24 @@ import Footer from './../Layout/Footer';
 import PageTitle from './../Layout/PageTitle';
 import Header2 from '../Layout/Header2';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { applyJob, getById } from '../../services/AxiosInstance';
-import { useSnackbar } from 'notistack';
+import {  fetchById} from '../../services/AxiosInstance';
 
 var bnr =require('./../../images/banner/bnr1.jpg');
 
 
-function Jobdetail(){
-
-	const {enqueueSnackbar}=useSnackbar()
+function CompanyViewJob(){
 	const [jobDetails,setJobDetails]=useState()
-	const [profileId,setProfileId]=useState()
-	const jobId=useParams().id
+	const jobId=useParams().jobId
 
 	
 	
 	useEffect(()=>{
-		const profile=localStorage.getItem("candidateId")
-		setProfileId(profile)
-		getById(jobId)
+		fetchById(jobId)
 	.then(res=>setJobDetails(res))
 	.catch(err=>console.log(err))
 	},[jobId])
 	
-	const handleSubmit=()=>{
 
-		applyJob(profileId,jobId)
-		.then(res=>{
-			// enqueueSnackbar("Application Submitted Successfully",{variant:"success"})
-			window.location.href="/jobs-applied"
-		})
-		.catch(err=>enqueueSnackbar(" Failed to Submit Application ",{variant:"error"}))
-	}
 
 	
 	return(
@@ -89,7 +75,7 @@ function Jobdetail(){
 										{/* <p className="p-t20">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p> */}
 										
 										<h5  className="font-weight-600 p-t20">Job Description</h5>
-										<div className="dez-divider divider-2px bg-gray-dark mb-4 mt-0" ></div>
+										<div className="dez-divider divider-2px bg-gray-dark mb-4 mt-0"></div>
 										<p style={{whiteSpace: 'pre-wrap',
 												
 													padding: "10px",
@@ -111,7 +97,7 @@ function Jobdetail(){
 											<li key={index}>{item}</li>	
 											))}
 										</ul>
-										<button onClick={handleSubmit} type='submit' className="site-button">Apply This Job</button>
+										<Link to={`/company-update-job/${jobDetails?.id}`}   className="site-button">Update</Link>
 									</div>
 								</div>
 							</div>
@@ -153,4 +139,4 @@ function Jobdetail(){
 		</>		
 	)
 }
-export default Jobdetail;
+export default CompanyViewJob;

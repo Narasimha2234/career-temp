@@ -3,11 +3,15 @@ import {Link} from 'react-router-dom';
 import Logout from './Logout';
 
 
+
+
 class Header2 extends Component{
-	state = {
+	 isLoggedIn=localStorage.getItem("isLoggedIn")
+	  role=localStorage.getItem("role")
+	 state = {
 		// initial state
 		show: false,
-	}
+	 }
 
 	handleClose = () => {
 		this.setState({ show: false });
@@ -61,28 +65,43 @@ class Header2 extends Component{
 								<span></span>
 							</button>
 							
-							<div className="extra-nav">
+							{!this.isLoggedIn &&(
+								<div className="extra-nav">
 								<div className="extra-cell">
 									<Link to={"/register-2"} className="site-button"><i className="fa fa-user"></i> Sign Up</Link>
+										{/* <Link to={'#'} title="READ MORE" onClick={this.handleShow} className="site-button"><i className="fa fa-lock"></i> login </Link> */}
+										{/* <Logout / > */}
+								</div>
+							</div>
+							)}
+							{this.isLoggedIn &&(
+								<div className="extra-nav">
+								<div className="extra-cell">
+									{/* <Link to={"/register-2"} className="site-button"><i className="fa fa-user"></i> Sign Up</Link> */}
 										{/* <Link to={'#'} title="READ MORE" onClick={this.handleShow} className="site-button"><i className="fa fa-lock"></i> login </Link> */}
 										<Logout / >
 								</div>
 							</div>
+							)}
 							
 							<div className="header-nav navbar-collapse collapse myNavbar justify-content-start" id="navbarNavDropdown">
 								<ul className="nav navbar-nav">
-									<li className="active">
-										<Link to={"/home"}>Home </Link>
+									<li >
+										<Link to={`${this.role==="ROLE_USER"?"/jobs-profile":"/company-post-jobs"}`}>Home </Link>
 										
 									</li>
-									<li>
+									{/* {this.role==="ROLE_USER" &&(
+										<li >
 										<Link to={"/jobs-profile"}> Profile </Link>
 										
 									</li>
-									<li>
+									)}
+									{this.role==="ROLE_ADMIN"&&(
+										<li >
 										<Link to={"/company-post-jobs"}>Admin </Link>
 										
 									</li>
+									)} */}
 									
 									
 								</ul>			

@@ -3,21 +3,23 @@ import {Link} from 'react-router-dom';
 import Header2 from './../Layout/Header2';
 import Footer from './../Layout/Footer';
 import {Form}  from 'react-bootstrap';         
-import { postJob } from '../../services/AxiosInstance';
-import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import { fetchById,  updateJob } from '../../services/AxiosInstance';
+import { useHistory, useLocation, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/actions/AuthActions';
 import { useSnackbar } from 'notistack';
 
-function Componypostjobs(){
+function ComponyUpdatePost(){
 	const {enqueueSnackbar}=useSnackbar()
 	const location=useLocation()
 	const[path,setPath]=useState("")
-	const dispatch=useDispatch()
-	const history=useHistory()
-	const handleLogout=()=>{
-	  dispatch(logout(history))
+    const jobId=useParams().jobId
+    const dispatch=useDispatch()
+    const history=useHistory()
+    const handleLogout=()=>{
+      dispatch(logout(history))
   }
+
 	useEffect(()=>{
 		setPath(location.pathname)
 	},[location.pathname])
@@ -37,6 +39,21 @@ function Componypostjobs(){
 		jobRequirements: '',
 		description: '',
 	  });
+
+      useEffect(()=>{
+        fetchById(jobId)
+        .then(res=>setFormData(
+            {
+                ...res,
+                jobRequirements:res?.jobRequirements?.filter((item)=>item).join(","),
+                skillSet:res?.skillSet?.filter((item)=>item).join(",")
+            }
+        ))
+        .catch(err=>console.log(err))
+      },[jobId])
+   
+      
+      
 	
 	  const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -47,11 +64,12 @@ function Componypostjobs(){
 	  };
 	const handleSubmit=async(e)=>{
 		e.preventDefault();
-		console.log(formData);
-		postJob(formData)
-		.then(res=>window.location.href="/company-manage-job")
-		.catch(err=>enqueueSnackbar("Failed to Post Job",{variant:"error"}))
-	
+        console.log(formData);
+        
+		updateJob(jobId,formData)
+        .then(res=>window.location.href=`/job-view/${jobId}`)
+        .catch(err=>enqueueSnackbar("Failed to UPdate the Job",{variant:"error"}))
+		
 	}
 	return(
 		<>
@@ -72,7 +90,7 @@ function Componypostjobs(){
 							
 												</div>
 												<div className="candidate-title">
-													<h4 className="m-b5"><Link to={"#"}>Orchasp Ltd</Link></h4>
+													<h4 className="m-b5"><Link to={"#"}>@COMPANY</Link></h4>
 												</div>
 											</div>
 											<ul>
@@ -207,7 +225,7 @@ function Componypostjobs(){
 												
 												
 											</div>
-											<button type="submit" className="site-button m-b30">Post</button>
+											<button type="submit" className="site-button m-b30">Update</button>
 										</form>
 									</div>
 								</div>
@@ -221,4 +239,4 @@ function Componypostjobs(){
 		</>
 	)
 }
-export default Componypostjobs;
+export default ComponyUpdatePost;

@@ -17,9 +17,10 @@ import SignUp from './markup/Pages/Register2';
 
 
 
-console.log(process.env.REACT_APP_BASE_API_URL);
-
 function App (props) {
+
+  
+    
     const dispatch = useDispatch();
     useEffect(() => {
         checkAutoLogin(dispatch, props.history);

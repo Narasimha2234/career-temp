@@ -1,16 +1,34 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import Header2 from './../Layout/Header2';
-import Footer from './../Layout/Footer';
+import React, { useEffect, useState } from 'react';
+import Header2 from '../Layout/Header2';
+import Footer from '../Layout/Footer';
 import Profilesidebar from '../Element/Profilesidebar';
+import { fetchJobById, } from '../../services/AxiosInstance';
 
-const postBlog = [
-	{ title: 'PHP Web Developer', },
-	{ title: 'Software Developer', },
-	{ title: 'Branch Credit Manager', },
-]
 
-function Jobsappliedjob (){
+
+function JobsApplied (){
+	const [jobs,setJobs]=useState()
+	const [currentPage, setCurrentPage] = useState(1);
+	const pageSize = 3; 
+	console.log(jobs)
+	const handlePageChange = (page) => {
+	setCurrentPage(page);
+	};
+
+	const currentJobs = jobs?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+	const totalPages = Math.ceil(jobs?.length / pageSize);
+	const totalPagesArray = totalPages > 0 ? [...Array(totalPages).keys()] : [];
+
+	console.log(totalPagesArray);
+	const candidateId=localStorage.getItem("candidateId")
+	useEffect(()=>{
+		fetchJobById(candidateId)
+		.then(res=>setJobs(res))
+		.catch(err=>console.log(err))
+	},[candidateId])
+	
+		console.log(jobs);
+		
 	return(
 		<>
 			<Header2 />
@@ -72,8 +90,8 @@ function Jobsappliedjob (){
 								<Profilesidebar/>
 								<div className="col-xl-9 col-lg-8 m-b30 browse-job">
 									<div className="job-bx-title  clearfix">
-										<h5 className="font-weight-700 pull-left text-uppercase">2269 Jobs Found</h5>
-										<div className="float-right">
+										<h5 className="font-weight-700 pull-left text-uppercase">{jobs?.length} {jobs?.length > 1? "Jobs":"Job"} Found</h5>
+										{/* <div className="float-right">
 											<span className="select-title">Sort by freshness</span>
 											<select className="custom-btn">
 												<option>Last 2 Months</option>
@@ -81,43 +99,53 @@ function Jobsappliedjob (){
 												<option>Last Weeks</option>
 												<option>Last 3 Days</option>
 											</select>
-										</div>
+										</div> */}
 									</div>
 									<ul className="post-job-bx browse-job">
-										{postBlog.map((item,index)=>(
+										{currentJobs?.map((item,index)=>(
 											<li key={index}>
 												<div className="post-bx">
 													<div className="job-post-info m-a0">
-														<h4><Link to={"/job-detail"}>{item.title}</Link></h4>
+														<h4>{item.jobName}</h4>
 														<ul>
-															<li><Link to={"/company-profile"}>@company-name</Link></li>
-															<li><i className="fa fa-map-marker"></i> Sacramento, California</li>
-															<li><i className="fa fa-money"></i> 25,000</li>
+															<li>@Orchasp ltd</li>
+															<li><i className="fa fa-map-marker"></i>{item.jobLocation}</li>
+															<li><i className="fa fa-money"></i>{item.salary}</li>
 														</ul>
-														<div className="job-time m-t15 m-b10">
-															<Link to={''} className="mr-1"><span>PHP</span></Link>
-															<Link to={''} className="mr-1"><span>Angular</span></Link>
-															<Link to={''} className="mr-1"><span>Bootstrap</span></Link>
-															<Link to={''} className="mr-1"><span>Wordpress</span></Link>
+														<div className="job-time m-t15 m-b10 d-flex">
+															{item?.skillSet?.map((item,index)=>(
+																<li  className="mr-1" key={index}><span>{item}</span></li>
+															))}
+															
+														
 														</div>
 														<div className="posted-info clearfix">
-															<p className="m-tb0 text-primary float-left"><span className="text-black m-r10">Posted:</span> 2 day ago</p>
-															<Link to={"/jobs-my-resume"} className="site-button button-sm float-right">Apply Job</Link>
+															<p className="m-tb0 text-primary float-left"><span className="text-black m-r10">experience :</span>{item.experience}</p>
+															{/* <Link to={`/job-detail/${item.id}`} className="site-button button-sm float-right">Apply Job</Link> */}
 														</div>
 													</div>
 												</div>
 											</li>
-										))}	
-										
+										))}		
 									</ul>
 									<div className="pagination-bx m-t30">
-										<ul className="pagination">
-											<li className="previous"><Link to={'#'}><i className="ti-arrow-left"></i> Prev</Link></li>
-											<li className="active"><Link to={'#'}>1</Link></li>
-											<li><Link to={'#'}>2</Link></li>
-											<li><Link to={'#'}>3</Link></li>
-											<li className="next"><Link to={'#'}>Next <i className="ti-arrow-right"></i></Link></li>
-										</ul>
+									<ul className="pagination">
+										<li className={`previous  ${currentPage === 1 ? 'disabled' : ''}`}>
+											<button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+											<i className="ti-arrow-left"></i> Prev
+											</button>
+										</li>
+										{[...Array(totalPages > 0 ? totalPages : 0).keys()].map((page) => (
+											<li key={page} className={`${currentPage === page + 1 ? 'active' : ''} ml-1`}>
+											<button onClick={() => handlePageChange(page + 1)}>{page + 1}</button>
+											</li>
+										))}
+										<li className={`next ml-1 ${currentPage === totalPages ? 'disabled' : ''}`}>
+											<button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+											Next <i className="ti-arrow-right"></i>
+											</button>
+										</li>
+									</ul>
 									</div>
 								</div>
 							</div>
@@ -129,4 +157,4 @@ function Jobsappliedjob (){
 		</>
 	)
 }
-export default Jobsappliedjob; 
+export default JobsApplied; 

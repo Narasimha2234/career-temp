@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import {store} from './store/store';
 import reportWebVitals from "./reportWebVitals";
 import SimpleReactLightbox from "simple-react-lightbox";
+import { SnackbarProvider } from 'notistack';
 
 //ReactDOM.render(<App />, document.getElementById('root'));
 
@@ -14,8 +15,10 @@ ReactDOM.render(
 	<React.StrictMode>
 		<Provider store = {store}>
             <SimpleReactLightbox>
-                <BrowserRouter basename='/react/demo'>
+                <BrowserRouter basename='/orchasp/careers'>
+                <SnackbarProvider autoHideDuration={3000} maxSnack={1} anchorOrigin={{vertical:"top",horizontal:"right"}}>
                     <App />
+                </SnackbarProvider>
                 </BrowserRouter>    
             </SimpleReactLightbox>
         </Provider>	
