@@ -6,6 +6,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "nanoid": "^3.1.30",
+    "notistack": "^3.0.1",
     "react": "^17.0.1",
     "react-animated-slider": "^1.1.4",
     "react-bootstrap": "^1.4.0",
@@ -31,7 +32,7 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-   "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
     "test": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts test",
     "eject": "react-scripts eject"

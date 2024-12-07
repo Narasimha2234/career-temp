@@ -1,31 +1,36 @@
 import axios from 'axios';
 import swal from "sweetalert";
 import {
+    isValidToken,
+    jwtDecode,
     loginConfirmedAction,
     logout,
+    setSession,
 } from '../store/actions/AuthActions';
 
-export function signUp(email, password) {
-    //axios call
+
+export const signUp=async(email, password,mobile)=> {
+    
+    
     const postData = {
         email,
         password,
-        returnSecureToken: true,
+        mobile
     };
-    return axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD3RPAp3nuETDn9OQimqn_YF6zdzqWITII`,
+    return await axios.post(
+        `http://localhost:8080/api/auth/register`,
         postData,
     );
 }
 
-export function login(email, password) {
+export const login=async (email, password)=> {
     const postData = {
         email,
         password,
         returnSecureToken: true,
     };
-    return axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD3RPAp3nuETDn9OQimqn_YF6zdzqWITII`,
+    return await axios.post(
+        `http://localhost:8080/api/auth/login`,
         postData,
     );
 }
@@ -66,23 +71,24 @@ export function runLogoutTimer(dispatch, timer, history) {
 }
 
 export function checkAutoLogin(dispatch, history) {
-    const tokenDetailsString = localStorage.getItem('userDetails');
-    let tokenDetails = '';
-    if (!tokenDetailsString) {
+    const token = localStorage.getItem('accessToken');
+    if(token && isValidToken(token)){
+        const userDetails= jwtDecode(token)
+        setSession(token)
+        const user={
+            email: userDetails.sub,
+            idToken: token,
+            localId: userDetails.id,
+            expiresIn: userDetails.exp,
+            role:userDetails.roles
+        }
+        dispatch(loginConfirmedAction(user))
+        history.push(`${user?.role==="ROLE_ADMIN"?"/company-post-jobs":"/jobs-profile"}`); 
+    }
+    else {
         dispatch(logout(history));
         return;
     }
 
-    tokenDetails = JSON.parse(tokenDetailsString);
-    let expireDate = new Date(tokenDetails.expireDate);
-    let todaysDate = new Date();
 
-    if (todaysDate > expireDate) {
-        dispatch(logout(history));
-        return;
-    }
-    dispatch(loginConfirmedAction(tokenDetails));
-
-    const timer = expireDate.getTime() - todaysDate.getTime();
-    runLogoutTimer(dispatch, timer, history);
 }

@@ -14,20 +14,21 @@ const initialState = {
         idToken: '',
         localId: '',
         expiresIn: '',
-        refreshToken: '',
+        role:''
     },
     errorMessage: '',
     successMessage: '',
     showLoading: false,
 };
-
+   
+    
 export function AuthReducer(state = initialState, action) {
     if (action.type === SIGNUP_CONFIRMED_ACTION) {
         return {
             ...state,
             auth: action.payload,
             errorMessage: '',
-            successMessage: 'Signup Successfully Completed',
+            successMessage: 'Signup Successfully Completed Login',
             showLoading: false,
         };
     }
