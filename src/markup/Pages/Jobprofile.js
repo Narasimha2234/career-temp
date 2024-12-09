@@ -15,15 +15,15 @@ function Jobprofile(){
 
 	const validationRules = {
 		firstName: {
-		  pattern: /^[A-Za-z\s]{1,5 0}$/,
+		  pattern:  /^[A-Za-z][A-Za-z\s]{0,49}$/,
 		  errorMessage: "First name should only contain letters and spaces",
 		},
 		lastName: {
-		  pattern: /^[A-Za-z\s]{1,50}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s]{0,49}$/,
 		  errorMessage: "Last name should only contain letters and spaces",
 		},
 		address: {
-		  pattern: /^[\w\s,.-]{5,100}$/,
+		  pattern: /^[^\s][\w\s,.-]{4,99}$/,
 		  errorMessage: "Address should be between 5 to 100 characters",
 		},
 		adhaarNo: {
@@ -39,11 +39,11 @@ function Jobprofile(){
 		  errorMessage: "Passport number should be a valid format, e.g., A1234567.",
 		},
 		qualification: {
-		  pattern: /^[A-Za-z\s,.-]{2,50}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,49}$/,
 		  errorMessage: "Qualification should only contain letters, spaces, and valid symbols (,.-), max 50 characters.",
 		},
 		skills: {
-		  pattern: /^[A-Za-z\s,.-]{2,100}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,99}$/,
 		  errorMessage: "Skills should be a comma-separated list, max 100 characters.",
 		},
 		yop: {
@@ -55,7 +55,7 @@ function Jobprofile(){
 		  errorMessage: "Experience should be a number between 0 and 99.",
 		},
 		collegeName: {
-		  pattern: /^[A-Za-z\s,.-]{2,100}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,99}$/,
 		  errorMessage: "College name should only contain letters, spaces, and valid symbols (,.-), max 100 characters.",
 		},
 		email: {
