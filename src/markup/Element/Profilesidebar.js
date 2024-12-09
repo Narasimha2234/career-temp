@@ -110,14 +110,18 @@ function Profilesidebar(){
 					.catch((err) => enqueueSnackbar("Failed to save profile pic", { variant: "error" }));
 			} else {
 				updateProfile(profileId, submitData)
-					.then(() => enqueueSnackbar("Profile pic updated successfully", { variant: "success" }))
+					.then(() => {
+							enqueueSnackbar("Profile pic updated successfully", { variant: "success" })
+							window.location.reload()
+							}
+						)
 					.catch(() => enqueueSnackbar("Failed to update profile pic", { variant: "error" }));
 			}
 			
 			return updatedFormData;
 		});
 	};
-	console.log(userProfile)
+
 	
 	return(
 		<div className="col-xl-3 col-lg-4 m-b30">
@@ -125,9 +129,9 @@ function Profilesidebar(){
 				<div className="candidate-info">
 					<div className="candidate-detail text-center">
 						<div className="canditate-des">
-							<Link to={''}>
-								<img alt="" src={userProfile} style={{height:"150px",width:"250px" ,borderRadius:"50%"}}/>
-							</Link>
+							<li>
+								<img alt="" src={userProfile} style={{height:"150px",width:"150px" ,borderRadius:"50%",objectFit:"",marginTop:"-25px"}}/>
+							</li>
 							<div className="upload-link" title="update" data-toggle="tooltip" data-placement="right">
 								<input type="file" className="update-flie" name="profilePic" onChange={handleFileChange}/>
 								<i className="fa fa-camera"></i>

@@ -1123,7 +1123,7 @@
 	width: 30px;
 	height: 30px;
 	border-radius: 30px;
-	border: 1px solid #2e55fa;
+	/* border: 1px solid #2e55fa; */
 	line-height: 30px;
 	text-align: center;
 	margin-left: 5px;
@@ -1135,7 +1135,7 @@
 .canditate-des  {
 	position: relative;
 	display: inline-block;
-	border: 2px solid #2E55FA;
+	/* border: 2px solid #2E55FA; */
 	outline-offset: 3px;
 	border-radius: 100%;
 	width: 150px;
@@ -1218,7 +1218,7 @@
 .canditate-des::before {
     content: "";
     position: absolute;
-    background-color: #2e55fa;
+    /* background-color: #2e55fa; */
     height: 115%;
     width: 2px;
     left: 50%;
@@ -1235,7 +1235,7 @@
     left: -15px;
     top: 50%;
     width: 120%;
-    background-color: #2e55fa;
+    /* background-color: #2e55fa; */
     height: 2px;
     z-index: -1;
 }

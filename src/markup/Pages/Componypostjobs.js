@@ -13,6 +13,7 @@ function Componypostjobs(){
 	const {enqueueSnackbar}=useSnackbar()
 	const location=useLocation()
 	const[path,setPath]=useState("")
+	const [errors, setErrors] = useState({});
 	const dispatch=useDispatch()
 	const history=useHistory()
 	const handleLogout=()=>{
@@ -37,17 +38,87 @@ function Componypostjobs(){
 		jobRequirements: '',
 		description: '',
 	  });
-	
+	  const validationRules = {
+		jobId: {
+		  pattern: /^[A-Za-z0-9_-]{1,20}$/,
+		  errorMessage: "Job ID should be alphanumeric",
+		},
+		jobName: {
+		  pattern: /^[A-Za-z\s]{3,50}$/,
+		  errorMessage: "Job name should contain letters",
+		},
+		jobRole: {
+		  pattern: /^[A-Za-z\s]{3,50}$/,
+		  errorMessage: "Job role should contain letters",
+		},
+		noOfOpenings: {
+		  pattern: /^[1-9][0-9]*$/,
+		  errorMessage: "Number of openings must be a positive integer.",
+		},
+		salary: {
+		  pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+		  errorMessage: "Salary must be a valid number, optionally with up to two decimal places.",
+		},
+		educationalQualification: {
+		  pattern: /^[A-Za-z\s,]{3,100}$/,
+		  errorMessage: "Enter educationalQualification",
+		},
+		yop: {
+		  pattern: /^\d{4}$/,
+		  errorMessage: "Year of passing must be a valid 4-digit year.",
+		},
+		jobLocation: {
+		  pattern: /^[A-Za-z\s,.-]{3,100}$/,
+		  errorMessage: "Job location should contain letters",
+		},
+		skillSet: {
+		  pattern: /^[A-Za-z\s,.-]{3,200}$/,
+		  errorMessage: "Skill set should be a comma-separated list of skills, max 200 characters.",
+		},
+		jobRequirements: {
+		  pattern: /^[A-Za-z0-9\s,.-]{10,500}$/,
+		  errorMessage: "Job requirements should be detailed, between 10 and 500 characters.",
+		},
+		description: {
+		  pattern: /^[A-Za-z0-9\s,.-]{10,1000}$/,
+		  errorMessage: "Description should be detailed, between 10 and 1000 characters.",
+		},
+	  };
+	  const validateField = (name, value) => {
+		const rule = validationRules[name];
+		if (rule && !rule.pattern.test(value)) {
+		  setErrors((prev) => ({ ...prev, [name]: rule.errorMessage }));
+		} else {
+		  setErrors((prev) => {
+			const { [name]: _, ...rest } = prev;
+			return rest;
+		  });
+		}
+	  };
+	  const validateAllFields = () => {
+		let isValid = true;
+		Object.entries(formData).forEach(([key, value]) => {
+		  if (!validateField(key, value)) {
+			isValid = false;
+		  }
+		});
+		return isValid;
+	  };
 	  const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 		  ...prev,
 		  [name]: value,
 		}));
+		validateField(name, value);
 	  };
 	const handleSubmit=async(e)=>{
 		e.preventDefault();
-		console.log(formData);
+		if (!validateAllFields()) {
+			enqueueSnackbar("Please fix the Field errors before submitting.", { variant: "error" });
+			return;
+		  }
+		
 		postJob(formData)
 		.then(res=>window.location.href="/company-manage-job")
 		.catch(err=>enqueueSnackbar("Failed to Post Job",{variant:"error"}))
@@ -112,20 +183,22 @@ function Componypostjobs(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job ID</label>
-														<input type="text" className="form-control" placeholder="Enter Job Title" name='jobId' value={formData.jobId} onChange={handleChange}/>
+														<input type="text" className="form-control" placeholder="Enter Job Id" name='jobId' value={formData.jobId} onChange={handleChange}/>
+														{errors.jobId && <span style={{ color: "red" }}>{errors.jobId}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job Name</label>
-														<input type="text" className="form-control" placeholder="info@gmail.com" name='jobName' value={formData.jobName} onChange={handleChange}/>
+														<input type="text" className="form-control" placeholder="Enter Job Name" name='jobName' value={formData.jobName} onChange={handleChange}/>
+														{errors.jobName && <span style={{ color: "red" }}>{errors.jobName}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job Role</label>
-														<input type="text" className="form-control tags_input" name='jobRole' value={formData.jobRole} onChange={handleChange}/>
-														
+														<input type="text" placeholder='Enter Job Role' className="form-control tags_input" name='jobRole' value={formData.jobRole} onChange={handleChange}/>
+														{errors.jobRole && <span style={{ color: "red" }}>{errors.jobRole}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
@@ -155,57 +228,63 @@ function Componypostjobs(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Number Of Openings</label>
-														<input type="number" className="form-control" placeholder="e.g. 10000" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
+														<input type="number" className="form-control" placeholder="Enter Number Of Openings for This Job" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
+														{errors.noOfOpenings && <span style={{ color: "red" }}>{errors.noOfOpenings}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Salary</label>
-														<input type="text" className="form-control" placeholder="e.g. 20000" name='salary' value={formData.salary} onChange={handleChange}/>
+														<input type="text" className="form-control" placeholder="Enter Salary" name='salary' value={formData.salary} onChange={handleChange}/>
+														{errors.salary && <span style={{ color: "red" }}>{errors.salary}</span>}
 													</div>
 												</div>
 												
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Qualification</label>
-														<input type="text" className="form-control" name='educationalQualification' value={formData.educationalQualification} onChange={handleChange} />
+														<input type="text" className="form-control" placeholder='Enter Qualifications Required' name='educationalQualification' value={formData.educationalQualification} onChange={handleChange} />
+														{errors.educationalQualification && <span style={{ color: "red" }}>{errors.educationalQualification}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>YOP</label>
-														<input type="text" className="form-control" name='yop' value={formData.yop} onChange={handleChange}/>
+														<input type="text" placeholder='Enter Year of Passout' className="form-control" name='yop' value={formData.yop} onChange={handleChange}/>
+														{errors.yop && <span style={{ color: "red" }}>{errors.yop}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job Location</label>
-														<input type="text" className="form-control" name='jobLocation' placeholder="London" value={formData.jobLocation} onChange={handleChange}/>
+														<input type="text" className="form-control" name='jobLocation' placeholder="Enter Job Location" value={formData.jobLocation} onChange={handleChange}/>
+														{errors.jobLocation && <span style={{ color: "red" }}>{errors.jobLocation}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Skill Set:</label>
-														<textarea  className="form-control form-row" name='skillSet' value={formData.skillSet} onChange={handleChange}>
+														<textarea  className="form-control form-row" placeholder='Enter Required Skills' name='skillSet' value={formData.skillSet} onChange={handleChange}>
 														</textarea>
+														{errors.skillSet && <span style={{ color: "red" }}>{errors.skillSet}</span>}
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job Requirements:</label>
-														<textarea  className="form-control form-row" name='jobRequirements' value={formData.jobRequirements} onChange={handleChange}>
+														<textarea placeholder='Enter Job Requirements' className="form-control form-row" name='jobRequirements' value={formData.jobRequirements} onChange={handleChange}>
 														</textarea>
+														{errors.jobRequirements && <span style={{ color: "red" }}>{errors.jobRequirements}</span>}
 													</div>
 												</div>
 												<div className="col-lg-12 col-md-12">
 													<div className="form-group">
 														<label>Description:</label>
-														<textarea  className="form-control" name='description' value={formData.description} onChange={handleChange}>
+														<textarea  className="form-control" placeholder='Enter Job Description' name='description' value={formData.description} onChange={handleChange}>
 														</textarea>
+														{errors.description && <span style={{ color: "red" }}>{errors.description}</span>}
 													</div>
-												</div>
-												
-												
+												</div>	
 											</div>
 											<button type="submit" className="site-button m-b30">Post</button>
 										</form>
