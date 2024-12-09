@@ -44,11 +44,11 @@ function Componypostjobs(){
 		  errorMessage: "Job ID should be alphanumeric",
 		},
 		jobName: {
-		  pattern: /^[A-Za-z\s]{3,50}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s]{2,49}$/,
 		  errorMessage: "Job name should contain letters",
 		},
 		jobRole: {
-		  pattern: /^[A-Za-z\s]{3,50}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s]{2,49}$/,
 		  errorMessage: "Job role should contain letters",
 		},
 		noOfOpenings: {
@@ -56,31 +56,31 @@ function Componypostjobs(){
 		  errorMessage: "Number of openings must be a positive integer.",
 		},
 		salary: {
-		  pattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+		  pattern:/^[0-9]+(\.[0-9]{1,2})?$/,
 		  errorMessage: "Salary must be a valid number, optionally with up to two decimal places.",
 		},
 		educationalQualification: {
-		  pattern: /^[A-Za-z\s,]{3,100}$/,
+		  pattern:/^[A-Za-z][A-Za-z\s,]{2,99}$/,
 		  errorMessage: "Enter educationalQualification",
 		},
 		yop: {
-		  pattern: /^\d{4}$/,
+		  pattern:  /^\d{4}$/,
 		  errorMessage: "Year of passing must be a valid 4-digit year.",
 		},
 		jobLocation: {
-		  pattern: /^[A-Za-z\s,.-]{3,100}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{2,99}$/,
 		  errorMessage: "Job location should contain letters",
 		},
 		skillSet: {
-		  pattern: /^[A-Za-z\s,.-]{3,200}$/,
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{2,199}$/,
 		  errorMessage: "Skill set should be a comma-separated list of skills, max 200 characters.",
 		},
 		jobRequirements: {
-		  pattern: /^[A-Za-z0-9\s,.-]{10,500}$/,
+		  pattern: /^[A-Za-z0-9][A-Za-z0-9\s,.-]{9,499}$/,
 		  errorMessage: "Job requirements should be detailed, between 10 and 500 characters.",
 		},
 		description: {
-		  pattern: /^[A-Za-z0-9\s,.-]{10,1000}$/,
+		  pattern: /^[A-Za-z0-9][A-Za-z0-9\s,.-]{9,999}$/,
 		  errorMessage: "Description should be detailed, between 10 and 1000 characters.",
 		},
 	  };
