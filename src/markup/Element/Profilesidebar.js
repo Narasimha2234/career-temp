@@ -59,7 +59,7 @@ function Profilesidebar(){
 			  if (res?.id) {
 				localStorage.setItem("candidateId",res?.id)
 				setProfileId(res.id);
-				setUserProfile(res?.profilePic ? `http://localhost:8080/files/get/${res?.profilePic}`:profileDemo)
+				setUserProfile(res?.profilePic ? `http://10.168.12.49:8080/files/get/${res?.profilePic}`:profileDemo)
 				setFormData({
 				  firstName: res?.firstName || "",
 				  lastName: res?.lastName || "",

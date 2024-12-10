@@ -39,7 +39,7 @@ function Companyresume() {
     const downloadResume = async (filename) => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/admin/download/resume/${filename}`,
+                `http://10.168.12.49:8080/api/admin/download/resume/${filename}`,
                 {
                     responseType: 'blob',
                     headers: {

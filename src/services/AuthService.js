@@ -8,9 +8,9 @@ import {
     setSession,
 } from '../store/actions/AuthActions';
 
-
+const BASE_URL=process.env.REACT_APP_BASE_API_URL 
 export const signUp=async(email, password,mobile)=> {
-    
+
     
     const postData = {
         email,
@@ -18,7 +18,7 @@ export const signUp=async(email, password,mobile)=> {
         mobile
     };
     return await axios.post(
-        `http://localhost:8080/api/auth/register`,
+        `${BASE_URL}/auth/register`,
         postData,
     );
 }
@@ -30,7 +30,7 @@ export const login=async (email, password)=> {
         returnSecureToken: true,
     };
     return await axios.post(
-        `http://localhost:8080/api/auth/login`,
+        `${BASE_URL}/auth/login`,
         postData,
     );
 }
