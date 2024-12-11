@@ -3,19 +3,34 @@ import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { loadingToggleAction, loginAction } from "../../store/actions/AuthActions";
 import loginbg from "./../../images/bg6.jpg";
+import { useSnackbar } from "notistack";
 
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const [errors, setErrors] = useState({ email: "", password: "" });
-
+  const {enqueueSnackbar}=useSnackbar()
   const dispatch = useDispatch();
+  const onChangeEmail = (e) => {
+    setEmail(e.target.value);
+    if (errors.email) {
+      setErrors((prev) => ({ ...prev, email: "" }));
+    }
+  };
+  
+  // Password onChange Handler
+  const onChangePassword = (e) => {
+    setPassword(e.target.value);
+    if (errors.password) {
+      setErrors((prev) => ({ ...prev, password: "" }));
+    }
+  };
 
   // Validation on form submission
   function onLogin(e) {
     e.preventDefault();
+    const emailRegex =/^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
     let error = false;
     let errorObj = { email: "", password: "" };
   
@@ -23,10 +38,10 @@ function Login(props) {
     if (email === "") {
       errorObj.email = "Email is required";
       error = true;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!emailRegex.test(email)) {
       errorObj.email = "Please enter a valid email address";
       error = true;
-    } 
+    }
     
     if (password === "") {
       errorObj.password = "Password is required";
@@ -45,7 +60,21 @@ function Login(props) {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+  React.useEffect(() => {
+    if (props.successMessage) {
+      enqueueSnackbar(props.successMessage, { variant: 'success' });
+    } else if (props.errorMessage && !props.successMessage) {
+      enqueueSnackbar(props.errorMessage, { variant: 'error' });
+    }
+    if (props.errorMessage) {
+      dispatch({ type: 'CLEAR_ERROR_MESSAGE' }); 
+    }
+    if (props.successMessage) {
+      dispatch({ type: 'CLEAR_SUCCESS_MESSAGE' }); 
+    }
+  }, [props.successMessage, props.errorMessage, enqueueSnackbar,dispatch]);
 
+  
   return (
     <div className="page-wraper">
       <div
@@ -77,7 +106,7 @@ function Login(props) {
                     </p>
 
                     {/* Error and Success Messages */}
-                    {props.errorMessage && (
+                    {/* {props.errorMessage && (
                       <div className="bg-red-300 text-red-900 border border-red-900 p-1 my-2">
                         {props.errorMessage}
                       </div>
@@ -86,7 +115,7 @@ function Login(props) {
                       <div className="bg-green-300 text-green-900 border border-green-900 p-1 my-2">
                         {props.successMessage}
                       </div>
-                    )}
+                    )} */}
 
                     {/* Email Input */}
                     <div className="form-group">
@@ -97,7 +126,7 @@ function Login(props) {
                           className="form-control"
                           placeholder="Type Your Email Address"
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={onChangeEmail}
                         />
                         
                       </div>
@@ -115,7 +144,7 @@ function Login(props) {
 							className="form-control"
 							placeholder="Type Your Password"
 							value={password}
-							onChange={(e) => setPassword(e.target.value)}
+							onChange={onChangePassword}
 							style={{ paddingRight: "2.5rem" }} // Space for the icon
 							/>
 							<i

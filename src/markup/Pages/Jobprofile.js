@@ -5,12 +5,14 @@ import Profilesidebar from './../Element/Profilesidebar';
 import { useSelector } from 'react-redux';
 import { getCandidateById, saveProfile, updateProfile } from '../../services/AxiosInstance';
 import { useSnackbar } from 'notistack';
+import { Form } from 'react-bootstrap';
 
 function Jobprofile(){
 	const {enqueueSnackbar}=useSnackbar()
 	const user=useSelector(state=>state.auth)
 	const [profileId,setProfileId]=useState("")
 	const [resumeName, setResumeName] = useState("");
+	const[resumeError,setResumeError]=useState("")
 	const [errors, setErrors] = useState({});
 
 	const validationRules = {
@@ -55,8 +57,8 @@ function Jobprofile(){
 		  errorMessage: "Experience should be a number between 0 and 99.",
 		},
 		collegeName: {
-		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,99}$/,
-		  errorMessage: "College name should only contain letters, spaces, and valid symbols (,.-), max 100 characters.",
+		  pattern: /^(?=.*[A-Za-z])[A-Za-z0-9\s,.-]{1,100}$/,
+		  errorMessage: "College name should only contain letters,numbers spaces, and valid symbols ( ,  .   - ), max 100 characters.",
 		},
 		email: {
 		  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -111,6 +113,7 @@ function Jobprofile(){
 		userId:user?.auth?.localId
 	  });
 	  
+
 	 
 	  
 	  
@@ -149,6 +152,8 @@ function Jobprofile(){
 				  userId: user?.auth?.localId,
 				});
 			  }
+			//   const email=localStorage.setItem("email")
+		    //   const mobile=localStorage.setItem("mobile")
 			  if (res?.resume) {
 				setResumeName(res.resume || "Existing Resume");
 			}
@@ -160,24 +165,38 @@ function Jobprofile(){
 
 	  
 	  const handleChange = (e) => {
-		const { name, value } = e.target;
-		validateField(name, value);
+		let { name, value } = e.target;
+		const formattedValue = name === "panNo" || name === "passportNo" ? value.toUpperCase() : value;
+		validateField(name, formattedValue);
 		setFormData({
 		  ...formData,
 		  
-		  [name]: value,
+		  [name]: formattedValue,
 		});
-		console.log(formData);
 	  };
 	  const handleFileChange = (e) => {
 		const file = e.target.files[0];
-		setFormData((prevFormData) => ({
-		  ...prevFormData,
-		  resume: file,
-		}));
-		setResumeName(file.name);
+		const maxSizeInBytes = 3 * 1024 * 1024; 
+		if (file) {
+			if (file.size > maxSizeInBytes) {
+			  setResumeError("File size must be less than or equal to 3MB.");
+			  setFormData((prevFormData) => ({
+				...prevFormData,
+				resume: null,
+			  }));
+			  setResumeName("")
+			} else {
+			  setResumeError(""); 
+			  setFormData((prevFormData) => ({
+				...prevFormData,
+				resume: file,
+			  }));
+			  setResumeName(file.name);
+			}
+		  }
+		
 	  };
-	   
+	  
 	  const handleSubmit=(e)=>{
 		e.preventDefault()
 
@@ -205,6 +224,7 @@ function Jobprofile(){
 		}
 		// window.location.reload()
 	  }
+	console.log(formData);
 	
 	  
 	return(
@@ -262,7 +282,7 @@ function Jobprofile(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Qualification:</label>
-														<input type="text" value={formData.qualification}  name='qualification' className="form-control" placeholder="qualications" onChange={handleChange}/>
+														<input type="text" value={formData.qualification}  name='qualification' className="form-control" placeholder="qualifications" onChange={handleChange}/>
 														{errors.qualification && <p style={{ color: "red", fontSize: "12px" }}>{errors.qualification}</p>}
 													</div>
 												</div>
@@ -270,10 +290,16 @@ function Jobprofile(){
 											</div>										
 											<div className="row">
 												<div className="col-lg-6 col-md-6">
-													<div className="form-group">
-														<label>YOP:</label>
-														<input type="text" value={formData.yop}  name='yop' className="form-control" placeholder="pass out year" onChange={handleChange}/>
-														{errors.yop && <p style={{ color: "red", fontSize: "12px" }}>{errors.yop}</p>}
+												<div className="form-group">
+														<label>YOP</label>
+														<Form.Control as="select" custom className="form-control" style={{height:"50px"}} name='yop' value={formData.yop} onChange={handleChange}>
+															<option>2024</option>
+															<option>2023</option>
+															<option>2021</option>
+															<option>2020</option>
+															<option>2019</option>
+															<option>2018</option>
+														</Form.Control>
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
@@ -293,7 +319,7 @@ function Jobprofile(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Adhar Number:</label>
-														<input type="text" value={formData.adhaarNo === 0 ? "" : formData.adhaarNo}  name='adhaarNo' className="form-control" placeholder="adhaar number" onChange={handleChange}/>
+														<input type="text" value={formData.adhaarNo === 0 ? "" : formData.adhaarNo}  name='adharNo' className="form-control" placeholder="adhaar number" onChange={handleChange}/>
 														{errors.adhaarNo && <p style={{ color: "red", fontSize: "12px" }}>{errors.adhaarNo}</p>}
 													</div>
 												</div>
@@ -313,8 +339,8 @@ function Jobprofile(){
 												</div>
 												<div className="col-lg-6 col-md-12">
 													<div className="form-group">
-														<label>Skills:</label>
-														<textarea  name='skills' value={formData.skills}  className="form-control" placeholder='your skills' onChange={handleChange}>
+														<label>Skills: <span style={{color:"GrayText"}}>( Seperate Skills with Comma )</span></label>
+														<textarea minLength={15}  name='skills' value={formData.skills}  className="form-control" placeholder='your skills' onChange={handleChange}>
 														</textarea>
 														{errors.skills && <p style={{ color: "red", fontSize: "12px" }}>{errors.skills}</p>}
 													</div>
@@ -341,9 +367,15 @@ function Jobprofile(){
 																	</p>
 																	<input type="file" name='resume' className="site-button form-control" id="customFile" onChange={handleFileChange}/>
 																</div>
-																{resumeName && (
-                                                                    <p className="mt-2">Selected Resume: <strong>{resumeName.split("_")[1]}</strong></p>
+																{resumeName && !resumeError &&(
+                                                                    <p className="mt-2">Selected Resume: <strong>{resumeName.includes("_")?resumeName.split("_")[1]:resumeName}</strong></p>
                                                                 )}
+																{!resumeName && !resumeError &&(
+																	<p style={{color:"GrayText"}}>Please Upload Your Latest Resume</p>
+																)}
+																{resumeError &&  (
+																	<p style={{color:"red"}}>{resumeError}</p>
+																)}
 															</div>
 														</div>
 													</div>

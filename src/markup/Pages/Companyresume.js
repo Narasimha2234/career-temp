@@ -8,6 +8,7 @@ import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.m
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/actions/AuthActions';
 
+const BASE_URL=process.env.REACT_APP_BASE_API_URL
 function Companyresume() {
     const [resumes, setResumes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +40,7 @@ function Companyresume() {
     const downloadResume = async (filename) => {
         try {
             const response = await axios.get(
-                `http://10.168.12.49:8080/api/admin/download/resume/${filename}`,
+                `${BASE_URL}/admin/download/resume/${filename}`,
                 {
                     responseType: 'blob',
                     headers: {

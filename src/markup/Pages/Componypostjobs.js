@@ -207,8 +207,7 @@ function Componypostjobs(){
 														<Form.Control as="select" custom className="custom-select" name='jobType' value={formData.jobType} onChange={handleChange}>
 															<option>Office</option>
 															<option>Remote</option>
-															<option>Hybrid</option>
-															
+															<option>Hybrid</option>	
 														</Form.Control>
 													</div>
 												</div>

@@ -5,6 +5,7 @@ import {
   loadingToggleAction,
   signupAction,
 } from "../../store/actions/AuthActions";
+import { useSnackbar } from "notistack";
 var bnr = require("./../../images/background/bg6.jpg");
 
 function Register2(props) {
@@ -21,19 +22,19 @@ function Register2(props) {
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-
+  const {enqueueSnackbar}=useSnackbar()
   const dispatch = useDispatch();
 
   function onSignUp(e) {
 	e.preventDefault();
 	let error = false;
 	const errorObj = { ...errors };
-  
+  const emailRegex =/^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
 	// Email Validation
 	if (email === "") {
 	  errorObj.email = "Email is required";
 	  error = true;
-	} else if (!/\S+@\S+\.\S+/.test(email)) {
+	} else if (!emailRegex.test(email)) {
 	  errorObj.email = "Please enter a valid email address";
 	  error = true;
 	}
@@ -72,7 +73,7 @@ function Register2(props) {
 		  error = true;
 		}
 	  }
-	
+    
   
 	// Confirm Password Validation
 	if (confirmPassword === "") {
@@ -90,7 +91,21 @@ function Register2(props) {
 	dispatch(loadingToggleAction(true));
 	dispatch(signupAction(email, password, phoneNumber, props.history));
   }
-  
+  React.useEffect(() => {
+    if (props.successMessage) {
+      enqueueSnackbar(props.successMessage, { variant: 'success' });
+    } 
+    // else if (props.errorMessage && !props.successMessage) {
+    //   enqueueSnackbar(props.errorMessage, { variant: 'error' });
+    // }
+    // if (props.errorMessage) {
+    //   dispatch({ type: 'CLEAR_ERROR_MESSAGE' }); 
+    // }
+    if (props.successMessage) {
+      dispatch({ type: 'CLEAR_SUCCESS_MESSAGE' }); 
+    }
+  }, [props.successMessage, enqueueSnackbar,dispatch]);
+
 
   return (
     <div className="page-wraper">
@@ -108,7 +123,7 @@ function Register2(props) {
                 <div className="clearfix"></div>
                 <div className="tab-content nav p-b30 tab">
                   <div id="login" className="tab-pane active ">
-                    {props.errorMessage && (
+                    {/* {props.errorMessage && (
                       <div className="bg-red-300 text-red-900 border border-red-900 p-1 my-2">
                         {props.errorMessage}
                       </div>
@@ -117,7 +132,7 @@ function Register2(props) {
                       <div className="bg-green-300 text-green-900 border border-green-900 p-1 my-2">
                         {props.successMessage}
                       </div>
-                    )}
+                    )} */}
                     <form className="dez-form p-b30" onSubmit={onSignUp}>
                       <h3 className="form-title m-t0">Create an Account</h3>
                       <p>
@@ -128,7 +143,13 @@ function Register2(props) {
                       <div className="form-group">
                         <input
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setErrors({ ...errors, email: "" }); 
+                            if(props.errorMessage){
+                              dispatch({ type: 'CLEAR_ERROR_MESSAGE' })
+                            }
+                          }}
                           className="form-control"
                           placeholder="Email"
                         />
@@ -141,7 +162,12 @@ function Register2(props) {
                       <div className="form-group">
                         <input
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          onChange={(e) => {setPhoneNumber(e.target.value)
+                            setErrors({...errors,phoneNumber:""})
+                            if(props.errorMessage){
+                              dispatch({ type: 'CLEAR_ERROR_MESSAGE' })
+                            }
+                          }}
                           className="form-control"
                           placeholder="Phone Number"
                         />
@@ -155,7 +181,9 @@ function Register2(props) {
 <div className="form-group" style={{ position: "relative", marginBottom: "1.5rem" }}>
   <input
     value={password}
-    onChange={(e) => setPassword(e.target.value)}
+    onChange={(e) => {setPassword(e.target.value)
+      setErrors({...errors,password:""})
+    }}
     type={passwordVisible ? "text" : "password"}
     className="form-control"
     placeholder="Password"
@@ -177,7 +205,9 @@ function Register2(props) {
       fontSize: "1rem",
       lineHeight: "1",
     }}
-    onClick={() => setPasswordVisible(!passwordVisible)}
+    onClick={() =>{ setPasswordVisible(!passwordVisible)
+      setErrors({...errors,confirmPassword:""})
+    }}
   ></i>
   {errors.password && (
     <div className="text-danger" style={{ marginTop: "0.25rem" }}>{errors.password}</div>
@@ -216,11 +246,6 @@ function Register2(props) {
 				<div className="text-danger" style={{ marginTop: "0.25rem" }}>{errors.confirmPassword}</div>
 			)}
 			</div>
-
-
-
-                    
-
                       {/* Submit Button */}
                       <div className="text-center bottom">
                         <button
@@ -229,6 +254,8 @@ function Register2(props) {
                         >
                           Sign Up
                         </button>
+                        {props.errorMessage && (<p style={{color:"red"}}>{props.errorMessage}</p> )}
+
                       </div>
                     </form>
                     {/* Sign In Link */}

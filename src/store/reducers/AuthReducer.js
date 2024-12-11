@@ -67,6 +67,16 @@ export function AuthReducer(state = initialState, action) {
             successMessage: '',
             showLoading: false,
         };
+    }if( action.type ==="CLEAR_ERROR_MESSAGE"){
+        return {
+            ...state,
+            errorMessage:""
+        }
+    }if( action.type ==="CLEAR_SUCCESS_MESSAGE"){
+        return {
+            ...state,
+            successMessage:""
+        }
     }
 
     if (action.type === LOADING_TOGGLE_ACTION) {

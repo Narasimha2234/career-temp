@@ -7,6 +7,8 @@ import profileDemo from "../../images/profile.png"
 import { getCandidateById, saveProfile, updateProfile } from '../../services/AxiosInstance';
 import {  useSnackbar } from 'notistack';
 
+const BASE_URL=process.env.REACT_APP_BASE_RESOURSE_URL
+
 function Profilesidebar(){
 	const { enqueueSnackbar }=useSnackbar()
 	const user=useSelector(state=>state.auth)
@@ -59,7 +61,7 @@ function Profilesidebar(){
 			  if (res?.id) {
 				localStorage.setItem("candidateId",res?.id)
 				setProfileId(res.id);
-				setUserProfile(res?.profilePic ? `http://10.168.12.49:8080/files/get/${res?.profilePic}`:profileDemo)
+				setUserProfile(res?.profilePic ? `${BASE_URL}/files/get/${res?.profilePic}`:profileDemo)
 				setFormData({
 				  firstName: res?.firstName || "",
 				  lastName: res?.lastName || "",

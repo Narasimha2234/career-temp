@@ -96,6 +96,16 @@ export function loadingToggleAction(status) {
         payload: status,
     };
 }
+export function clearErrorMessage() {
+    return {
+        type: "CLEAR_ERROR_MESSAGE",
+    };
+}
+export function clearSuccessMessage() {
+    return {
+        type: "CLEAR_SUCCESS_MESSAGE",
+    };
+}
 
 export function jwtDecode(token) {
     const base64Url = token.split('.')[1]; 
