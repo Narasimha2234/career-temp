@@ -134,7 +134,7 @@ function Profilesidebar(){
 							<li>
 								<img alt="" src={userProfile} style={{height:"150px",width:"150px" ,borderRadius:"50%",objectFit:"",marginTop:"-25px"}}/>
 							</li>
-							<div className="upload-link" title="update" data-toggle="tooltip" data-placement="right">
+							<div className="upload-link" title="upload" data-toggle="tooltip" data-placement="right">
 								<input type="file" className="update-flie" name="profilePic" onChange={handleFileChange}/>
 								<i className="fa fa-camera"></i>
 							</div>

@@ -319,7 +319,7 @@ function Jobprofile(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Adhar Number:</label>
-														<input type="text" value={formData.adhaarNo === 0 ? "" : formData.adhaarNo}  name='adharNo' className="form-control" placeholder="adhaar number" onChange={handleChange}/>
+														<input type="text" value={formData.adhaarNo === 0 ? "" : formData.adhaarNo}  name='adhaarNo' className="form-control" placeholder="adhar number" onChange={handleChange}/>
 														{errors.adhaarNo && <p style={{ color: "red", fontSize: "12px" }}>{errors.adhaarNo}</p>}
 													</div>
 												</div>
