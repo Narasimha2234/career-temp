@@ -10,13 +10,13 @@ function Footer(){
 							<div className="widget">
 								<img src={require("./../../images/orchasp_logo.png")} width="180" className="m-b15" alt=""/>
 								<p className="text-capitalize m-b20">CIN: L72200TG1994PLC017485 </p>
-								{/* <ul className="list-inline m-a0">
+								<ul className="list-inline m-a0">
 									<li className="site-button white twitter circle mr-2"><i className="fa fa-facebook"></i></li>
 									<li className="site-button white twitter circle mr-2"><i className="fa fa-google-plus"></i></li>
 									<li className="site-button white twitter circle mr-2"><i className="fa fa-linkedin"></i></li>
 									<li className="site-button white twitter circle mr-2"><i className="fa fa-instagram"></i></li>
 									<li className="site-button white twitter circle mr-2"><i className="fa fa-twitter"></i></li>
-								</ul> */}
+								</ul>
 							</div>
 						</div>
 						<div className="col-xl-5 col-lg-5 col-md-8 col-sm-8 col-12">

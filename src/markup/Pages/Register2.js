@@ -75,7 +75,6 @@ function Register2(props) {
 	  }
     
   
-	// Confirm Password Validation
 	if (confirmPassword === "") {
 	  errorObj.confirmPassword = "Confirm password is required";
 	  error = true;

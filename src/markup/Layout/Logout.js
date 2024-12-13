@@ -36,6 +36,7 @@ function LogoutPage(props){
             <LogoutModal
                 onConfirm={handleConfirmLogout}
                 onClose={handleCloseModal}
+                text={"Are you sure you want to logout?"}
             />
         )}
     </>

@@ -32,7 +32,7 @@ function Componypostjobs(){
 		noOfOpenings: '',
 		salary: '',
 		educationalQualification: '',
-		yop: '',
+		yop: '2024',
 		jobLocation: '',
 		skillSet: '',
 		jobRequirements: '',
@@ -40,7 +40,7 @@ function Componypostjobs(){
 	  });
 	  const validationRules = {
 		jobId: {
-		  pattern: /^[A-Za-z0-9_-]{1,20}$/,
+		  pattern: /^[A-Za-z0-9_\-\@\$\!\%\*\?\&#]{1,20}$/,
 		  errorMessage: "Job ID should be alphanumeric",
 		},
 		jobName: {
@@ -56,12 +56,12 @@ function Componypostjobs(){
 		  errorMessage: "Number of openings must be a positive integer.",
 		},
 		salary: {
-		  pattern:/^[0-9]+(\.[0-9]{1,2})?$/,
+		  pattern:/^(?! )[A-Za-z0-9_\-\@\$\!\%\*\?\&#\s]{1,20}(?:\s?[-to]\s?[A-Za-z0-9_\-\@\$\!\%\*\?\&#\s]{1,20})?$/,
 		  errorMessage: "Salary must be a valid number, optionally with up to two decimal places.",
 		},
 		educationalQualification: {
-		  pattern:/^[A-Za-z][A-Za-z\s,]{2,99}$/,
-		  errorMessage: "Enter educationalQualification",
+		  pattern:/^(?![ .])[A-Za-z0-9_\-\@\$\!\%\*\?\&#.\s]{1,20}(?:\s?[-to]\s?[A-Za-z0-9_\-\@\$\!\%\*\?\&#.\s]{1,20})?$/,
+		  errorMessage: "Enter valid format",
 		},
 		yop: {
 		  pattern:  /^\d{4}$/,
@@ -72,8 +72,8 @@ function Componypostjobs(){
 		  errorMessage: "Job location should contain letters",
 		},
 		skillSet: {
-		  pattern: /^[A-Za-z][A-Za-z\s,.-]{2,199}$/,
-		  errorMessage: "Skill set should be a comma-separated list of skills, max 200 characters.",
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{10,199}$/,
+		  errorMessage: "Skill set should be a comma-separated list of skills, min 10 characters.",
 		},
 		jobRequirements: {
 		  pattern: /^[A-Za-z0-9][A-Za-z0-9\s,.-]{9,499}$/,
@@ -84,18 +84,40 @@ function Componypostjobs(){
 		  errorMessage: "Description should be detailed, between 10 and 1000 characters.",
 		},
 	  };
-	  const validateField = (name, value) => {
+	//   const validateField = (name, value) => {
+	// 	const rule = validationRules[name];
+	// 	if (rule && !rule.pattern.test(value)) {
+	// 	  setErrors((prev) => ({ ...prev, [name]: rule.errorMessage }));
+	// 	} else {
+	// 	  setErrors((prev) => {
+	// 		const { [name]: _, ...rest } = prev;
+	// 		return rest;
+	// 	  });
+	// 	}
+	//   };
+	const validateField = (name, value) => {
 		const rule = validationRules[name];
 		if (rule && !rule.pattern.test(value)) {
 		  setErrors((prev) => ({ ...prev, [name]: rule.errorMessage }));
+		  return false;
 		} else {
 		  setErrors((prev) => {
 			const { [name]: _, ...rest } = prev;
 			return rest;
 		  });
+		  return true;
 		}
 	  };
-	  const validateAllFields = () => {
+	//   const validateAllFields = () => {
+	// 	let isValid = true;
+	// 	Object.entries(formData).forEach(([key, value]) => {
+	// 	  if (!validateField(key, value)) {
+	// 		isValid = false;
+	// 	  }
+	// 	});
+	// 	return isValid;
+	//   };
+	const validateAllFields = () => {
 		let isValid = true;
 		Object.entries(formData).forEach(([key, value]) => {
 		  if (!validateField(key, value)) {
@@ -118,11 +140,11 @@ function Componypostjobs(){
 			enqueueSnackbar("Please fix the Field errors before submitting.", { variant: "error" });
 			return;
 		  }
-		
 		postJob(formData)
-		.then(res=>window.location.href="/company-manage-job")
-		.catch(err=>enqueueSnackbar("Failed to Post Job",{variant:"error"}))
-	
+		.then(res=>{history.push("/company-manage-job") 
+			enqueueSnackbar("Job Posted ",{variant:"success"})
+		})
+		.catch(err=>enqueueSnackbar("Failed to Post Job Retry",{variant:"error"}))
 	}
 	return(
 		<>
@@ -216,7 +238,7 @@ function Componypostjobs(){
 														<label>Experience</label>
 														<Form.Control as="select" custom className="custom-select" name='experience' value={formData.experience} onChange={handleChange}>
 															<option>fresher	</option>
-															<option>1 Years</option>
+															<option>1 Year</option>
 															<option>2 Years</option>
 															<option>3 Years</option>
 															<option>4 Years</option>
@@ -227,7 +249,7 @@ function Componypostjobs(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Number Of Openings</label>
-														<input type="number" className="form-control" placeholder="Enter Number Of Openings for This Job" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
+														<input type="tel" className="form-control" placeholder="Enter Number Of Openings for This Job" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
 														{errors.noOfOpenings && <span style={{ color: "red" }}>{errors.noOfOpenings}</span>}
 													</div>
 												</div>
@@ -247,10 +269,27 @@ function Componypostjobs(){
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
-													<div className="form-group">
+												<div className="form-group">
 														<label>YOP</label>
-														<input type="text" placeholder='Enter Year of Passout' className="form-control" name='yop' value={formData.yop} onChange={handleChange}/>
-														{errors.yop && <span style={{ color: "red" }}>{errors.yop}</span>}
+														<Form.Control as="select" custom className="form-control" style={{height:"49px"}} name='yop' value={formData.yop } onChange={handleChange}>
+														<option>2026</option>
+														<option>2025</option>
+															<option>2024</option>
+															<option>2023</option>
+															<option>2022</option>
+															<option>2021</option>
+															<option>2020</option>
+															<option>2019</option>
+															<option>2018</option>
+															<option>2017</option>
+															<option>2016</option>
+															<option>2015</option>
+															<option>2014</option>
+															<option>2013</option>
+															<option>2012</option>
+															<option>2011</option>
+															<option>2010</option>
+														</Form.Control>
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
@@ -262,7 +301,7 @@ function Componypostjobs(){
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
-														<label>Skill Set:</label>
+														<label>Skill Set: <span style={{color:"GrayText"}}>( Seperate Skills with Comma )</span></label>
 														<textarea  className="form-control form-row" placeholder='Enter Required Skills' name='skillSet' value={formData.skillSet} onChange={handleChange}>
 														</textarea>
 														{errors.skillSet && <span style={{ color: "red" }}>{errors.skillSet}</span>}
@@ -270,7 +309,7 @@ function Componypostjobs(){
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
-														<label>Job Requirements:</label>
+														<label>Requirements:<span style={{color:"GrayText"}}>(Seperate Requirements with Comma)</span></label>
 														<textarea placeholder='Enter Job Requirements' className="form-control form-row" name='jobRequirements' value={formData.jobRequirements} onChange={handleChange}>
 														</textarea>
 														{errors.jobRequirements && <span style={{ color: "red" }}>{errors.jobRequirements}</span>}

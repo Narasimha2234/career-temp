@@ -16,7 +16,7 @@ ReactDOM.render(
 		<Provider store = {store}>
             <SimpleReactLightbox>
                 <BrowserRouter basename='/orchasp/careers'>
-                <SnackbarProvider autoHideDuration={3000} maxSnack={1} anchorOrigin={{vertical:"bottom",horizontal:"right"}}>
+                <SnackbarProvider autoHideDuration={3000} maxSnack={1} anchorOrigin={{vertical:"top",horizontal:"center"}}>
                     <App />
                 </SnackbarProvider>
                 </BrowserRouter>    

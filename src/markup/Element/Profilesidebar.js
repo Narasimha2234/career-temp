@@ -89,7 +89,10 @@ function Profilesidebar(){
 
 	  const handleFileChange = (e) => {
 		const file = e.target.files[0];
-		
+		if(file?.type!=="image/jpeg" || file?.type!=="image/png"){
+			enqueueSnackbar("Please Select image or png file Only",{variant:"error"})
+			return ;
+		}
 		
 		setFormData((prevFormData) => {
 			const updatedFormData = { ...prevFormData, profilePic: file };
@@ -141,8 +144,8 @@ function Profilesidebar(){
 						</div>
 						<div className="candidate-title">
 							<div className="">
-								<h4 className="m-b5">{formData.firstName}</h4>
-								<p  className="m-b0">{formData.email}</p>
+								<h4 className="m-b5">{formData.firstName} {formData.lastName}</h4>
+								{/* <p  className="m-b0">{formData.email}</p> */}
 							</div>
 						</div>
 					</div>

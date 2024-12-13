@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header2 from './../Layout/Header2';
 import Footer from './../Layout/Footer';
-import { Modal } from 'react-bootstrap';
 import { deleteJob, fetchAllJobs } from '../../services/AxiosInstance';
 import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/actions/AuthActions';
 import { useSnackbar } from 'notistack';
+import LogoutModal from '../Element/LogoutModel';
 
 function Companymanage() {
   const [company, setCompany] = useState(false);
+  const [showModel, setShowModel] = useState(false);
+  const [jobId,setJobId]=useState()
   const {enqueueSnackbar}=useSnackbar()
   const [jobList, setJobList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,18 +37,24 @@ function Companymanage() {
       .catch((err) => console.log(err));
   }, []);
 
+  const handleConfirmation=(id)=>{
+    setJobId(id)
+    setShowModel(true)
+  }
+
+  function handleCloseModal() {
+    setShowModel(false);  
+  }
+
   const handleDeleteJob=(id)=>{
-    console.log(id);
-    
 	deleteJob(id)
 	.then(res=>{
+    window.location.reload()
     enqueueSnackbar("Job Deleted",{variant:"success"})
   })
 	.catch(err=> enqueueSnackbar("Failed to Delete Job",{variant:"error"}))
   }
 
-  
-  // Calculate total pages
   const totalPages = Math.ceil(jobList.length / jobsPerPage);
 
   // Get jobs for current page
@@ -167,7 +175,7 @@ function Companymanage() {
                               <Link to={`/job-view/${item?.id}`}>
                                 <i className="fa fa-eye"></i>
                               </Link>
-                              <li onClick={()=>handleDeleteJob(item?.id)}>
+                              <li onClick={()=>handleConfirmation(item?.id)}>
                                 <i className="ti-trash"></i>
                               </li>
                             </td>
@@ -262,6 +270,13 @@ function Companymanage() {
         </div>
       </div>
       <Footer />
+      {showModel && (
+        <LogoutModal
+          text={"Really Want to Delete ?"}
+          onClose={handleCloseModal}
+          onConfirm={()=>handleDeleteJob(jobId)}
+        />
+      )}
     </>
   );
 }

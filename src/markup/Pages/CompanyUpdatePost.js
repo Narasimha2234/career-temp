@@ -9,17 +9,18 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../../store/actions/AuthActions';
 import { useSnackbar } from 'notistack';
 
+
 function ComponyUpdatePost(){
 	const {enqueueSnackbar}=useSnackbar()
 	const location=useLocation()
 	const[path,setPath]=useState("")
     const jobId=useParams().jobId
     const dispatch=useDispatch()
-    const history=useHistory()
+	const history = useHistory();
     const handleLogout=()=>{
       dispatch(logout(history))
-  }
-
+    }
+	
 	useEffect(()=>{
 		setPath(location.pathname)
 	},[location.pathname])
@@ -51,10 +52,6 @@ function ComponyUpdatePost(){
         ))
         .catch(err=>console.log(err))
       },[jobId])
-   
-      
-      
-	
 	  const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
@@ -67,9 +64,11 @@ function ComponyUpdatePost(){
         console.log(formData);
         
 		updateJob(jobId,formData)
-        .then(res=>window.location.href=`/job-view/${jobId}`)
+        .then(res=>{
+			history.push(`/job-view/${jobId}`)
+			enqueueSnackbar("Job updated ",{variant:"success"})
+		})
         .catch(err=>enqueueSnackbar("Failed to UPdate the Job",{variant:"error"}))
-		
 	}
 	return(
 		<>
@@ -173,7 +172,7 @@ function ComponyUpdatePost(){
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Number Of Openings</label>
-														<input type="number" className="form-control" placeholder="e.g. 10000" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
+														<input type="tel" className="form-control" placeholder="e.g. 10000" name='noOfOpenings' value={formData.noOfOpenings} onChange={handleChange}/>
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
@@ -190,11 +189,29 @@ function ComponyUpdatePost(){
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
-													<div className="form-group">
-														<label>YOP</label>
-														<input type="text" className="form-control" name='yop' value={formData.yop} onChange={handleChange}/>
-													</div>
-												</div>
+																								<div className="form-group">
+																										<label>YOP</label>
+																										<Form.Control as="select" custom className="form-control" style={{height:"49px"}} name='yop' value={formData.yop } onChange={handleChange}>
+																										<option>2026</option>
+																										<option>2025</option>
+																											<option>2024</option>
+																											<option>2023</option>
+																											<option>2022</option>
+																											<option>2021</option>
+																											<option>2020</option>
+																											<option>2019</option>
+																											<option>2018</option>
+																											<option>2017</option>
+																											<option>2016</option>
+																											<option>2015</option>
+																											<option>2014</option>
+																											<option>2013</option>
+																											<option>2012</option>
+																											<option>2011</option>
+																											<option>2010</option>
+																										</Form.Control>
+																									</div>
+																								</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
 														<label>Job Location</label>

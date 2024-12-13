@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import Footer from './../Layout/Footer';
 import PageTitle from './../Layout/PageTitle';
 import Header2 from '../Layout/Header2';
-import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { applyJob, getById } from '../../services/AxiosInstance';
 import { useSnackbar } from 'notistack';
 
@@ -12,7 +12,7 @@ var bnr =require('./../../images/banner/bnr1.jpg');
 
 
 function Jobdetail(){
-
+	const history=useHistory()
 	const {enqueueSnackbar}=useSnackbar()
 	const [jobDetails,setJobDetails]=useState()
 	const [profileId,setProfileId]=useState()
@@ -32,8 +32,8 @@ function Jobdetail(){
 
 		applyJob(profileId,jobId)
 		.then(res=>{
-			// enqueueSnackbar("Application Submitted Successfully",{variant:"success"})
-			window.location.href="/jobs-applied"
+			enqueueSnackbar("Application Submitted Successfully",{variant:"success"})
+			history.push("/jobs-applied")
 		})
 		.catch(err=>enqueueSnackbar(" Failed to Submit Application ",{variant:"error"}))
 	}

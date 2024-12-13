@@ -12,20 +12,33 @@ function Login(props) {
   const [errors, setErrors] = useState({ email: "", password: "" });
   const {enqueueSnackbar}=useSnackbar()
   const dispatch = useDispatch();
-  const onChangeEmail = (e) => {
-    setEmail(e.target.value);
-    if (errors.email) {
-      setErrors((prev) => ({ ...prev, email: "" }));
-    }
-  };
+ const onChangeEmail = (e) => {
+  const value = e.target.value;
+  setEmail(value);
+
+  const emailRegex = /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
+
+  // Validate email in real-time
+  if (!value) {
+    setErrors((prev) => ({ ...prev, email: "Email is required" }));
+  } else if (!emailRegex.test(value)) {
+    setErrors((prev) => ({ ...prev, email: "Please enter a valid email address" }));
+  } else {
+    setErrors((prev) => ({ ...prev, email: "" }));
+  }
+};
   
-  // Password onChange Handler
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-    if (errors.password) {
-      setErrors((prev) => ({ ...prev, password: "" }));
-    }
-  };
+const onChangePassword = (e) => {
+  const value = e.target.value;
+  setPassword(value);
+
+  // Validate password in real-time
+  if (!value) {
+    setErrors((prev) => ({ ...prev, password: "Password is required" }));
+  } else {
+    setErrors((prev) => ({ ...prev, password: "" }));
+  }
+};
 
   // Validation on form submission
   function onLogin(e) {

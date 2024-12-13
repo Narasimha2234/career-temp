@@ -1,6 +1,6 @@
 import React from 'react';
 
-function LogoutModal({ onClose, onConfirm }) {
+function LogoutModal({ onClose, onConfirm ,text}) {
     return (
         <div style={{
             position: "fixed",
@@ -24,7 +24,7 @@ function LogoutModal({ onClose, onConfirm }) {
                 textAlign: "center",
                 boxSizing: "border-box"
             }}>
-                <h5 style={{ marginBottom: "20px" }}>Are you sure you want to logout?</h5>
+                <h5 style={{ marginBottom: "20px" }}>{text}</h5>
                 <div>
                     <button 
                         onClick={onConfirm} 

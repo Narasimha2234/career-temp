@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import { getCandidateById, saveProfile, updateProfile } from '../../services/AxiosInstance';
 import { useSnackbar } from 'notistack';
 import { Form } from 'react-bootstrap';
+import axios from 'axios';
+
+const BASE_URL=process.env.REACT_APP_BASE_RESOURSE_URL
 
 function Jobprofile(){
 	const {enqueueSnackbar}=useSnackbar()
@@ -14,6 +17,8 @@ function Jobprofile(){
 	const [resumeName, setResumeName] = useState("");
 	const[resumeError,setResumeError]=useState("")
 	const [errors, setErrors] = useState({});
+	const [view,setView]=useState(false)
+	const[viewResume,setViewResume]=useState()
 
 	const validationRules = {
 		firstName: {
@@ -41,20 +46,12 @@ function Jobprofile(){
 		  errorMessage: "Passport number should be a valid format, e.g., A1234567.",
 		},
 		qualification: {
-		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,49}$/,
-		  errorMessage: "Qualification should only contain letters, spaces, and valid symbols (,.-), max 50 characters.",
+		  pattern: /^(?![ .])[A-Za-z0-9_\-\@\$\!\%\*\?\&#.\s]{1,20}(?:\s?[-to]\s?[A-Za-z0-9_\-\@\$\!\%\*\?\&#.\s]{1,20})?$/,
+		  errorMessage: "Qualification should only contain letters, spaces, and valid symbols (,.-), .",
 		},
 		skills: {
-		  pattern: /^[A-Za-z][A-Za-z\s,.-]{1,99}$/,
-		  errorMessage: "Skills should be a comma-separated list, max 100 characters.",
-		},
-		yop: {
-		  pattern: /^\d{4}$/,
-		  errorMessage: "Year of passing should be a valid 4-digit year.",
-		},
-		experience: {
-		  pattern: /^([0-9]|[1-9][0-9])$/,
-		  errorMessage: "Experience should be a number between 0 and 99.",
+		  pattern: /^[A-Za-z][A-Za-z\s,.-]{10,99}$/,
+		  errorMessage: "Skills should be a comma-separated list, min 10 characters.",
 		},
 		collegeName: {
 		  pattern: /^(?=.*[A-Za-z])[A-Za-z0-9\s,.-]{1,100}$/,
@@ -69,9 +66,9 @@ function Jobprofile(){
 		  errorMessage: "Mobile number should be a valid 10-digit Indian number.",
 		},
 	  };
-	  const validateField = (name, value) => {
+	const validateField = (name, value) => {
 		const rule = validationRules[name];
-		if (rule && !rule.pattern.test(value)) {
+		if (rule && !rule.pattern.test(String(value))) { 
 		  setErrors((prevErrors) => ({
 			...prevErrors,
 			[name]: rule.errorMessage,
@@ -85,15 +82,25 @@ function Jobprofile(){
 		  return true;
 		}
 	  };
-	  const validateAllFields = () => {
+
+	const validateAllFields = () => {
 		let isValid = true;
+		const newErrors = {};
+	  
 		Object.entries(formData).forEach(([key, value]) => {
-		  if (!validateField(key, value)) {
+		 
+		  const rule = validationRules[key];
+		  if (rule && !rule.pattern.test(String(value))) {
+			
 			isValid = false;
+			newErrors[key] = rule.errorMessage;
 		  }
 		});
+	  
+		setErrors(newErrors);
 		return isValid;
 	  };
+	  
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -112,11 +119,6 @@ function Jobprofile(){
 		mobile: '',
 		userId:user?.auth?.localId
 	  });
-	  
-
-	 
-	  
-	  
 	  useEffect(() => {
 		const email=localStorage.getItem("email")
 		const mobile=localStorage.getItem("mobile")
@@ -152,18 +154,15 @@ function Jobprofile(){
 				  userId: user?.auth?.localId,
 				});
 			  }
-			//   const email=localStorage.setItem("email")
-		    //   const mobile=localStorage.setItem("mobile")
+
 			  if (res?.resume) {
 				setResumeName(res.resume || "Existing Resume");
-			}
+				
+			 }
 			})
 			.catch((err) => console.error(err));
 		}
 	  }, [user]);
-
-
-	  
 	  const handleChange = (e) => {
 		let { name, value } = e.target;
 		const formattedValue = name === "panNo" || name === "passportNo" ? value.toUpperCase() : value;
@@ -175,8 +174,15 @@ function Jobprofile(){
 		});
 	  };
 	  const handleFileChange = (e) => {
+		
 		const file = e.target.files[0];
+		
 		const maxSizeInBytes = 3 * 1024 * 1024; 
+		if(file?.type!=="application/pdf"){
+			enqueueSnackbar("Please Select Pdf files Only",{variant:"error"})
+			return ;
+		}
+
 		if (file) {
 			if (file.size > maxSizeInBytes) {
 			  setResumeError("File size must be less than or equal to 3MB.");
@@ -191,41 +197,49 @@ function Jobprofile(){
 				...prevFormData,
 				resume: file,
 			  }));
+			  setViewResume(URL.createObjectURL(file));
 			  setResumeName(file.name);
 			}
 		  }
-		
 	  };
 	  
 	  const handleSubmit=(e)=>{
-		e.preventDefault()
-
-		if (!validateAllFields()) {
-			enqueueSnackbar("Please fix the Field errors before submitting.", { variant: "error" });
-			return;
-		  }
-
-		const submitData = new FormData();
-		Object.keys(formData).forEach((key) => {
-		  if (key ==="resume") {
-			submitData.append(key, formData[key]); 
-		  } else {
-			submitData.append(key, formData[key]); 
-		  }
-		});
-		if(profileId===""){
-		saveProfile(submitData)
-		.then(res=>enqueueSnackbar("profile saved successfully",{variant:"success"}))
-		.catch(err=>console.log(err))
-		}else{
-			updateProfile(profileId,submitData)
-			.then(res=>enqueueSnackbar("profile Updated successfully",{variant:"success"}))
-			.catch(err=>enqueueSnackbar("failed to Update profile",{variant:"error"}))
-		}
-		// window.location.reload()
+		e.preventDefault();
+			if (!validateAllFields()) {
+				enqueueSnackbar("Please fix the field errors before submitting.", { variant: "error" });
+				return;
+			}
+			console.log("Submitting form data...", formData);
+			const submitData = new FormData();
+			Object.keys(formData).forEach((key) => {
+				submitData.append(key, formData[key]);
+			});
+			if (profileId === "") {
+				saveProfile(submitData)
+					.then((res) => enqueueSnackbar("Profile saved successfully", { variant: "success" }))
+					.catch((err) => enqueueSnackbar("Failed to save profile", { variant: "error" }));
+			} else {
+				updateProfile(profileId, submitData)
+					.then((res) => enqueueSnackbar("Profile updated successfully", { variant: "success" }))
+					.catch((err) => enqueueSnackbar("Failed to update profile", { variant: "error" }));
+			}
 	  }
-	console.log(formData);
+
+	  const handleViewResume=async()=>{
+		setView(true)
+		if(!viewResume){
+			 setViewResume(`${BASE_URL}/files/get/${resumeName}`)	 
+		}
 	
+	  }
+ 
+	  const handleCloseResume=()=>{
+		setView(false)
+		if (viewResume) {
+			URL.revokeObjectURL(viewResume); 
+		  }
+	  }
+	  console.log(viewResume);
 	  
 	return(
 		<>	
@@ -295,18 +309,33 @@ function Jobprofile(){
 														<Form.Control as="select" custom className="form-control" style={{height:"50px"}} name='yop' value={formData.yop} onChange={handleChange}>
 															<option>2024</option>
 															<option>2023</option>
+															<option>2022</option>
 															<option>2021</option>
 															<option>2020</option>
 															<option>2019</option>
 															<option>2018</option>
+															<option>2017</option>
+															<option>2016</option>
+															<option>2015</option>
+															<option>2014</option>
+															<option>2013</option>
+															<option>2012</option>
+															<option>2011</option>
+															<option>2010</option>
 														</Form.Control>
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
 													<div className="form-group">
-														<label>Experience:</label>
-														<input type="text" value={formData.experience}  name='experience' className="form-control" placeholder="experience" onChange={handleChange}/>
-														{errors.experience && <p style={{ color: "red", fontSize: "12px" }}>{errors.experience}</p>}
+														<label>Experience</label>
+														<Form.Control as="select" custom className="form-control" style={{height:"50px"}} name='experience' value={formData.experience} onChange={handleChange}>
+															<option>fresher	</option>
+															<option>1 Years</option>
+															<option>2 Years</option>
+															<option>3 Years</option>
+															<option>4 Years</option>
+															<option>5 Years</option>
+														</Form.Control>
 													</div>
 												</div>
 												<div className="col-lg-6 col-md-6">
@@ -340,7 +369,7 @@ function Jobprofile(){
 												<div className="col-lg-6 col-md-12">
 													<div className="form-group">
 														<label>Skills: <span style={{color:"GrayText"}}>( Seperate Skills with Comma )</span></label>
-														<textarea minLength={15}  name='skills' value={formData.skills}  className="form-control" placeholder='your skills' onChange={handleChange}>
+														<textarea   name='skills' value={formData.skills}  className="form-control" placeholder='your skills' onChange={handleChange}>
 														</textarea>
 														{errors.skills && <p style={{ color: "red", fontSize: "12px" }}>{errors.skills}</p>}
 													</div>
@@ -367,15 +396,25 @@ function Jobprofile(){
 																	</p>
 																	<input type="file" name='resume' className="site-button form-control" id="customFile" onChange={handleFileChange}/>
 																</div>
-																{resumeName && !resumeError &&(
-                                                                    <p className="mt-2">Selected Resume: <strong>{resumeName.includes("_")?resumeName.split("_")[1]:resumeName}</strong></p>
-                                                                )}
-																{!resumeName && !resumeError &&(
-																	<p style={{color:"GrayText"}}>Please Upload Your Latest Resume</p>
-																)}
-																{resumeError &&  (
-																	<p style={{color:"red"}}>{resumeError}</p>
-																)}
+																<div style={{display:"flex",justifyContent:"space-between"}}>
+																	<p>
+																	{resumeName && !resumeError &&(
+																		<p className="mt-2">Selected Resume: <strong>{resumeName.includes("_")?resumeName.split("_")[1]:resumeName}</strong></p>
+																	)}
+																	{!resumeName && !resumeError &&(
+																		<p style={{color:"GrayText"}}>Please Upload Your Latest Resume</p>
+																	)}
+																	{resumeError &&  (
+																		<p style={{color:"red"}}>{resumeError}</p>
+																	)}
+																	</p>
+																	<p>
+																	{resumeName && !resumeError &&(
+																		<p className="mt-2 text-primary " style={{cursor:"pointer"}} onClick={handleViewResume}>View Resume <i className='fa fa-eye'/></p>
+																	)}
+																	</p>
+																	
+																</div>
 															</div>
 														</div>
 													</div>
@@ -383,14 +422,64 @@ function Jobprofile(){
 											</div>
 											<button className="site-button m-b30"> {profileId===""?"Save":"Update"}</button>
 										</form>
+										
 									</div>    
 								</div>
-							</div>
-						</div>
+								
+							</div>							
+						</div>					
 					</div>
 				</div>
 			</div>
 			<Footer />	
+			{view && (
+						<div
+						style={{
+						  position: "fixed",
+						  top: "50%",
+						  left: "50%",
+						  transform: "translate(-50%, -50%)",
+						  backgroundColor: "whitesmoke",
+						  zIndex: 1000,
+						  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+						  borderRadius: "8px",
+						  width: "80%",
+						  maxWidth: "600px",
+						  padding: "20px",
+						}}
+					  >
+						<div
+						  style={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginBottom: "10px",
+						  }}
+						>
+						  <h5 style={{ margin: 0 }}>Resume Preview</h5>
+						  <span
+							onClick={handleCloseResume}
+							style={{
+							  cursor: "pointer",
+							  fontSize: "18px",
+							  fontWeight: "bold",
+							  color: "red",
+							}}
+						  >
+							×
+						  </span>
+						</div>
+						<iframe
+						  src={viewResume}
+						  title="Preview Resume"
+						  style={{
+							width: "100%",
+							height: "600px",
+							border: "none",
+						  }}
+						/>
+					  </div>
+			)}
 		</>
 	)
 } 
