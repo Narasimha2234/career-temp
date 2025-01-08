@@ -49,7 +49,7 @@ function CompanyViewJob(){
 													<h4 className="text-black font-weight-700 p-t10 m-b15">Job Details</h4>
 													<ul>
 														<li><i className="ti-location-pin"></i><strong className="font-weight-700 text-black">Address</strong><span className="text-black-light"> {jobDetails?.jobLocation}</span></li>
-														<li><i className="ti-money"></i><strong className="font-weight-700 text-black">Salary</strong> {jobDetails?.salary} Monthy</li>
+														<li><i className="ti-money"></i><strong className="font-weight-700 text-black">Salary</strong> {jobDetails?.salary} </li>
 														<li><i className="ti-shield"></i><strong className="font-weight-700 text-black">Experience</strong>{jobDetails?.experience} Experience</li>
 													</ul>
 												</div>

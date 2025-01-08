@@ -228,10 +228,14 @@ function Jobprofile(){
 	  const handleViewResume=async()=>{
 		setView(true)
 		if(!viewResume){
-			 setViewResume(`${BASE_URL}/files/get/${resumeName}`)	 
+			
+			 setViewResume(`${BASE_URL}/get/files/${resumeName}`)	 
 		}
 	
 	  }
+	  console.log(viewResume);
+	
+	  
  
 	  const handleCloseResume=()=>{
 		setView(false)
@@ -394,7 +398,7 @@ function Jobprofile(){
 																	<i className="fa fa-upload"></i>
 																	Upload Resume File size is 3 MB
 																	</p>
-																	<input type="file" name='resume' className="site-button form-control" id="customFile" onChange={handleFileChange}/>
+																	<input type="file" accept='.pdf,.docx' name='resume' className="site-button form-control" id="customFile" onChange={handleFileChange}/>
 																</div>
 																<div style={{display:"flex",justifyContent:"space-between"}}>
 																	<p>

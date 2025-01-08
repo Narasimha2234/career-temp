@@ -14,7 +14,8 @@ function Profilesidebar(){
 	const user=useSelector(state=>state.auth)
 	const [userProfile,setUserProfile]=useState(profileDemo)
 	const [profileId,setProfileId]=useState("")
-
+	// console.log(userProfile);
+	
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -61,7 +62,7 @@ function Profilesidebar(){
 			  if (res?.id) {
 				localStorage.setItem("candidateId",res?.id)
 				setProfileId(res.id);
-				setUserProfile(res?.profilePic ? `${BASE_URL}/files/get/${res?.profilePic}`:profileDemo)
+				setUserProfile(res?.profilePic ? `${BASE_URL}/get/files/${res?.profilePic}`:profileDemo)
 				setFormData({
 				  firstName: res?.firstName || "",
 				  lastName: res?.lastName || "",
@@ -89,10 +90,10 @@ function Profilesidebar(){
 
 	  const handleFileChange = (e) => {
 		const file = e.target.files[0];
-		if(file?.type!=="image/jpeg" || file?.type!=="image/png"){
-			enqueueSnackbar("Please Select image or png file Only",{variant:"error"})
-			return ;
-		}
+		// if(file?.type!=="image/jpeg" || file?.type!=="image/png"){
+		// 	enqueueSnackbar("Please Select image or png file Only",{variant:"error"})
+		// 	return ;
+		// }
 		
 		setFormData((prevFormData) => {
 			const updatedFormData = { ...prevFormData, profilePic: file };
@@ -138,7 +139,7 @@ function Profilesidebar(){
 								<img alt="" src={userProfile} style={{height:"150px",width:"150px" ,borderRadius:"50%",objectFit:"",marginTop:"-25px"}}/>
 							</li>
 							<div className="upload-link" title="upload" data-toggle="tooltip" data-placement="right">
-								<input type="file" className="update-flie" name="profilePic" onChange={handleFileChange}/>
+								<input type="file" className="update-flie" accept='.png,.jpeg,.jpg' name="profilePic" onChange={handleFileChange}/>
 								<i className="fa fa-camera"></i>
 							</div>
 						</div>
